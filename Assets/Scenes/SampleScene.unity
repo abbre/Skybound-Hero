@@ -1178,7 +1178,7 @@ Transform:
   m_GameObject: {fileID: 181465893}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -171.11458, y: 25.918749, z: -10}
+  m_LocalPosition: {x: -170.44803, y: 25.923326, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -31720,7 +31720,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -171.11458, y: 25.918749, z: -10}
+  m_LocalPosition: {x: -170.44803, y: 25.923326, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -41282,7 +41282,7 @@ Transform:
   m_GameObject: {fileID: 900635174}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0045776367, y: -1.6687489, z: -20}
+  m_LocalPosition: {x: -0.66197205, y: -1.6733265, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -45883,7 +45883,7 @@ GameObject:
   - component: {fileID: 1209840728}
   - component: {fileID: 1209840727}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TextInstruction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45903,10 +45903,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 661212932}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -182}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -0.000015258789, y: 87}
+  m_SizeDelta: {x: 1187.4946, y: 82.2856}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1209840727
 MonoBehaviour:
@@ -45955,8 +45955,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 70
+  m_fontSizeBase: 70
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -45991,7 +45991,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -174.49945, y: 0, z: -172.64362, w: 0}
+  m_margin: {x: 0.28814697, y: 0, z: 1.0307007, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -47404,7 +47404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1459334416}
   m_Layer: 0
-  m_Name: Text
+  m_Name: ColliderForText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47523,7 +47523,7 @@ Transform:
   m_GameObject: {fileID: 1511574318}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.0045776367, y: -1.6687489, z: 0}
+  m_LocalPosition: {x: -0.66197205, y: -1.6733265, z: 0}
   m_LocalScale: {x: 0.25714, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
