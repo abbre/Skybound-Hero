@@ -6,10 +6,10 @@ TagManager:
   tags:
   - Ground
   - Water
-  - Ladder
   - Plane
   - Trigger1
   - Trigger2
+  - Object
   layers:
   - Default
   - TransparentFX

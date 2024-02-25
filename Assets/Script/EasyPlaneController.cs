@@ -8,17 +8,24 @@ public class EasyPlaneController : MonoBehaviour
     private bool inWater = false;
     public GameObject childObject; // 子物体的引用
     public Sprite newSprite; // 要更换的 Sprite
+    public Sprite defaultSprite;
 
     public GameObject wave;
     private WaveMovement waveMovement;
+    public GameObject waste; // 垃圾的预制体
+    private bool wastecount;
 
     private Rigidbody2D rb;
+    public Player player; 
+    public PlayerHealthManager playerHealthManager;
 
-    void Start()
+
+    public void Start()
     {   
         rb = GetComponent<Rigidbody2D>();
         waveMovement = wave.GetComponent<WaveMovement>(); // 获取 Wave 的移动脚本
         waveMovement.enabled = false; 
+        wastecount = true;
     }
 
     void Update()
@@ -87,30 +94,82 @@ public class EasyPlaneController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (other.CompareTag("Ground") || other.CompareTag("Object") || (other.CompareTag("Ground") && other.CompareTag("Water")))
         {
+            if (other.CompareTag("Ground"))
+            {
+                playerHealthManager.TakeDamage();
+            }
             grounded = true;
             currentFlyingForce = 0f;
+            Debug.Log("Grounded or Object Triggered!");
+            rb.AddForce(Vector2.down * 10f, ForceMode2D.Impulse);
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            
+            SwitchToPlayerControl();
         }
-        else if (collision.gameObject.CompareTag("Water"))
+        else if (other.CompareTag("Water"))
         {
             inWater = true;
-            // 启动Wave对象的移动
             waveMovement.enabled = true;
         }
     }
+    void SwitchToPlayerControl()
+    {   
+        Debug.Log("Switching to Player control...");
+        // 禁用 EasyPlaneController 脚本
+        this.enabled = false;
 
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
+        // 启用 Player 脚本
+        player.enabled = true;
+        player.Start();
+
+        // 重置 EasyPlaneController 的状态
+        grounded = false;
+        inWater = false;
+        currentFlyingForce = 0f;
+
+        transform.rotation = Quaternion.identity;
+
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        // 确保角色可以移动
+        rb.velocity = Vector2.zero;
+
+        SpriteRenderer childRenderer = childObject.GetComponent<SpriteRenderer>();
+        if (childRenderer != null && defaultSprite != null)
         {
-            grounded = false;
+            childRenderer.sprite = defaultSprite;
         }
-        else if (collision.gameObject.CompareTag("Water"))
+        if (wastecount == true)
         {
-            inWater = false;
+            DropWaste();
         }
+
+        if (inWater)
+        {
+            waveMovement.enabled = true;
+        }
+        Debug.Log("Player control enabled.");
     }
+    void DropWaste()
+    {
+        if (waste != null)
+        {
+            // 将垃圾的位置设置为玩家的位置
+            waste.transform.position = transform.position;
+
+            // 获取垃圾对象的刚体组件
+            Rigidbody2D wasteRb = waste.GetComponent<Rigidbody2D>();
+        }
+        else
+        {
+            Debug.LogError("waste is null!");
+        }
+        wastecount = false;
+    }
+
 }

@@ -14,6 +14,9 @@ public class TextDisplay : MonoBehaviour
     private bool showControlText = false;
     private bool showSailText = false;
     private bool showText = false;
+    private bool showHelpText = false;
+
+    public Player player; 
 
     void Start()
     {
@@ -33,6 +36,13 @@ public class TextDisplay : MonoBehaviour
             {
                 showControlText = true;
                 StartCoroutine(ShowText("Use Space To Control"));
+            }
+
+            if (player != null && player.helpText && !showHelpText)
+            {
+                showHelpText = true;
+                StartCoroutine(ShowText("Press I To Interact"));
+                Debug.Log("Showing help text");
             }
 
             yield return null;
@@ -66,6 +76,7 @@ public class TextDisplay : MonoBehaviour
         {
             showText = true;
             StartCoroutine(ShowText("You have finished the tutorial"));
+            Time.timeScale = 0f;
         }
     }
 }
