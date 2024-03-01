@@ -1,17 +1,12 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlaneController : MonoBehaviour
 {
     public float spiralSpeed;
-    public float minSpiralRadius;
-    public float maxSpiralRadius;
-    public float radiusSlope = 0.1f;
+    public float radiusDiameter; //此数值和实半径大小成反比，若要调整飞行半径，只需要调整这个数值
 
-    //public float spiralForceThreshold;
-    public float holdingTimeThreshold = 0.5f;
-    private float _currentRadius;
-    [HideInInspector]public float holdingTimeCnter;
+    public float holdingTimeThreshold = 0.5f; //按下多久
+    [HideInInspector] public float holdingTimeCnter;
     private float _previousAngle;
 
     private float _previousHeight;
@@ -20,63 +15,80 @@ public class PlaneController : MonoBehaviour
     private bool grounded;
     private bool isSpiraling;
     private Vector2 lastVelocity;
-    public float maxFlyingForce = 20f;
 
+    //对于
+    public float maxFlyingForceHorizontal;
+    public float maxFlyingForceSpiral;
+
+    private bool _motionChosen = false;
+    private bool _spiralMotionChosen = false;
+    private bool _horizontalMotionChosen = false;
+    private bool _speedZero = false;
+    
     private Rigidbody2D rb;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        _currentRadius = maxSpiralRadius;
+        // _currentRadius = maxSpiralRadius;
     }
 
     private void Update()
     {
-        Debug.Log(_currentRadius);
+        if(spee
         if (!grounded)
         {
-            if (Input.GetKey(KeyCode.Space))
+            if (!_motionChosen)
             {
-                rb.velocity = Vector2.zero;
-                holdingTimeCnter += Time.deltaTime;
-                transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
-
+                if (Input.GetKeyDown(KeyCode.W))
+                {
+                    _speedZero = true;
+                    rb.velocity = Vector2.zero;
+                    _spiralMotionChosen = true;
+                    _motionChosen = true;
+                    Debug.Log("spiralchosen");
+                }
+                else if (Input.GetKeyDown(KeyCode.D))
+                {
+                    _speedZero = true;
+                    _horizontalMotionChosen = true;
+                    _motionChosen = true;
+                    Debug.Log("horizontalchosen");
+                }
             }
 
-
-            if (Input.GetKeyUp(KeyCode.Space))
+            if (_motionChosen) //如果玩家按下方向选择键
             {
-                if (holdingTimeCnter < holdingTimeThreshold)
+                if (Input.GetKey(KeyCode.Space))
                 {
-                    currentFlyingForce = holdingTimeCnter * maxFlyingForce * 0.1f;
-                    rb.AddForce(transform.right * currentFlyingForce, ForceMode2D.Impulse);
-                }
-                else //_holdingTimeCnter >= holdingTimeThreshold
-                {
-                    currentFlyingForce = holdingTimeCnter * maxFlyingForce;
-                    _currentRadius -= radiusSlope * holdingTimeCnter; // (_holdingTimeCnter - 0.5f)
-
-                    Debug.Log(_currentRadius);
-                    _spiralStrength = currentFlyingForce;
-                    isSpiraling = true;
-
-                    if (_currentRadius < minSpiralRadius)
-                    {
-                        _currentRadius = minSpiralRadius;
-
-                    }
-                    else if (_currentRadius > maxSpiralRadius)
-                    {
-                        _currentRadius = maxSpiralRadius;
-                    }
-
-                    spiralSpeed = Mathf.Sqrt(currentFlyingForce * _currentRadius);
-                    rb.velocity = new Vector2(spiralSpeed, 0f);
+                    rb.velocity = Vector2.zero;
+                    holdingTimeCnter += Time.deltaTime;
+                    transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
                 }
 
-                _currentRadius = maxSpiralRadius;
-                currentFlyingForce = 0f;
-                holdingTimeCnter = 0;
+                if (Input.GetKeyUp(KeyCode.Space))
+                {
+                    if (_horizontalMotionChosen) //选择平抛模式
+                    {
+                        currentFlyingForce = holdingTimeCnter * maxFlyingForceHorizontal;
+                        rb.AddForce(transform.right * currentFlyingForce, ForceMode2D.Impulse);
+                        _motionChosen = false;
+                        _horizontalMotionChosen = false;
+                    } else if (_spiralMotionChosen) //选择旋转模式
+                    {
+                        currentFlyingForce = holdingTimeCnter * maxFlyingForceSpiral * radiusDiameter;
+
+                        _spiralStrength = currentFlyingForce;
+                        isSpiraling = true;
+
+                        rb.velocity = new Vector2(spiralSpeed, 0f);
+                    }
+                    currentFlyingForce = 0f;
+                    
+                   
+                    
+                }
+               
             }
 
             if (isSpiraling)
@@ -94,12 +106,15 @@ public class PlaneController : MonoBehaviour
                 if (_previousAngle < 0 && angle >= 0) // detect if the plane has rotated one circle 
                 {
                     isSpiraling = false;
+                    _spiralMotionChosen = false;
+                    _motionChosen = false;
                     angle = 0;
                     rb.gravityScale = 1f; // set the gravity back to make the plane drop
                 }
 
                 _previousAngle = angle;
             }
+           
         }
     }
 
