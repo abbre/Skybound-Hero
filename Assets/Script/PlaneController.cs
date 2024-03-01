@@ -31,6 +31,7 @@ public class PlaneController : MonoBehaviour
 
     private void Update()
     {
+        if(spee
         if (!grounded)
         {   
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
