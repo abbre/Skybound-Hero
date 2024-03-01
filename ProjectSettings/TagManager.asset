@@ -10,8 +10,6 @@ TagManager:
   - Trigger1
   - Trigger2
   - Object
-  - RedArea
-  - Boundry
   layers:
   - Default
   - TransparentFX
