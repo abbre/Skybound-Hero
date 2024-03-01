@@ -35,7 +35,6 @@ public class PlaneController : MonoBehaviour
 
     private void Update()
     {
-        if(spee
         if (!grounded)
         {
             if (!_motionChosen)
