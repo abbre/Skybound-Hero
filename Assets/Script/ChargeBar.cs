@@ -17,7 +17,7 @@ public class ChargeBar : MonoBehaviour
     void Update()
     {
         // 如果按下了空格键
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
         {
             //barGameObj.SetActive(true); // 按下空格键时显示
             chargeBar.value = planeController.holdingTimeCnter;

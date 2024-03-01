@@ -9,7 +9,6 @@ public class PlaneController : MonoBehaviour
     [HideInInspector] public float holdingTimeCnter;
     private float _previousAngle;
 
-    private float _previousHeight;
     private float _spiralStrength;
     private float currentFlyingForce;
     private bool grounded;
@@ -36,6 +35,7 @@ public class PlaneController : MonoBehaviour
     private void Update()
     {
         if (!grounded)
+<<<<<<< Updated upstream
         {
             if (!_motionChosen)
             {
@@ -57,9 +57,21 @@ public class PlaneController : MonoBehaviour
             }
 
             if (_motionChosen) //如果玩家按下方向选择键
+=======
+        {   
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
+            {
+                rb.velocity = Vector2.zero;
+                transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                holdingTimeCnter += Time.deltaTime;
+            }
+            
+            if (Input.GetKeyUp(KeyCode.D))
+>>>>>>> Stashed changes
             {
                 if (Input.GetKey(KeyCode.Space))
                 {
+<<<<<<< Updated upstream
                     rb.velocity = Vector2.zero;
                     holdingTimeCnter += Time.deltaTime;
                     transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
@@ -88,6 +100,50 @@ public class PlaneController : MonoBehaviour
                     
                 }
                
+=======
+                    currentFlyingForce = holdingTimeCnter * maxFlyingForce;
+                    rb.AddForce(transform.right * currentFlyingForce, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    rb.AddForce(transform.right * maxFlyingForce, ForceMode2D.Impulse);
+                }
+                holdingTimeCnter = 0;
+            }
+
+           
+            if (Input.GetKeyUp(KeyCode.W))
+            {
+                if (holdingTimeCnter < holdingTimeThreshold * 0.5f)
+                {
+                    currentFlyingForce = holdingTimeCnter * maxFlyingForce * 0.3f;//
+                    rb.AddForce(transform.up * currentFlyingForce, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    currentFlyingForce = holdingTimeCnter * maxFlyingForce;
+                    _currentRadius += radiusSlope * holdingTimeCnter; // (_holdingTimeCnter - 0.5f)
+                    Debug.Log(_currentRadius);
+                    _spiralStrength = currentFlyingForce; 
+                    isSpiraling = true;
+
+                    if (_currentRadius < minSpiralRadius)
+                    {
+                         _currentRadius = minSpiralRadius;
+                    }
+                    else if (_currentRadius > maxSpiralRadius)
+                    {
+                        _currentRadius = maxSpiralRadius;
+                    }
+
+                    spiralSpeed = Mathf.Sqrt(currentFlyingForce * _currentRadius);
+                    rb.velocity = new Vector2(spiralSpeed, 0f);
+                }
+
+                _currentRadius = minSpiralRadius;
+                currentFlyingForce = 0f;
+                holdingTimeCnter = 0;
+>>>>>>> Stashed changes
             }
 
             if (isSpiraling)
@@ -98,7 +154,7 @@ public class PlaneController : MonoBehaviour
 
                 lastVelocity = rb.velocity;
 
-                // The angle of the plane internal rotation
+                    // The angle of the plane internal rotation
                 var angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
@@ -115,6 +171,7 @@ public class PlaneController : MonoBehaviour
             }
            
         }
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
