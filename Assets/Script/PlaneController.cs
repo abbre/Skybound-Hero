@@ -3,39 +3,65 @@ using UnityEngine.Serialization;
 
 public class PlaneController : MonoBehaviour
 {
-    public float spiralSpeed;
-    public float minSpiralRadius;
-    public float maxSpiralRadius;
-    public float radiusSlope = 0.1f;
+    public float spiralSpeed = 100f; // 控制旋转速度
+    public float maxFlyingForce = 20f;
+    public float minSpiralRadius = 5f;
+    public float maxSpiralRadius = 50f;
+    public float holdingTimeThreshold = 1f;
+    public float maxSpiralSpeed;
+    public float minSpiralSpeed;
 
-    //public float spiralForceThreshold;
-    public float holdingTimeThreshold = 0.5f;
-    private float _currentRadius;
+    public GameObject windUp;
+    public GameObject windRight;
+
     [HideInInspector] public float holdingTimeCnter;
-    private float _previousAngle;
+    private Vector2 spiralCenter;
+    private bool isSpiraling;
+    private float angleRotated = 0f;
 
-    private float _spiralStrength;
+    private Vector2 previousPosition;
+
     private float currentFlyingForce;
     private bool grounded;
-    private bool isSpiraling;
-    private Vector2 lastVelocity;
-    public float maxFlyingForce = 20f;
 
+    private Quaternion initialRotation;
+    private Vector2 initialVelocity;
+    private float initialAngularVelocity;
+ 
     private Rigidbody2D rb;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        _currentRadius = maxSpiralRadius;
+        previousPosition = transform.position;
+
+        initialRotation = transform.rotation;
+        initialVelocity = rb.velocity;
+        initialAngularVelocity = rb.angularVelocity;
+
+        windUp.SetActive(false);
+        windRight.SetActive(false);
     }
 
     private void Update()
     {
-        if(spee
         if (!grounded)
         {   
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
             {
+                if (Input.GetKey(KeyCode.D))
+                {
+                    windRight.SetActive(true);
+                    windUp.SetActive(false);
+                }
+                else if (Input.GetKey(KeyCode.W))
+                {
+                    windUp.SetActive(true);
+                    windRight.SetActive(false);
+                }
+
+                isSpiraling = false;
+                rb.gravityScale = 1f; 
                 rb.velocity = Vector2.zero;
                 transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
                 holdingTimeCnter += Time.deltaTime;
@@ -52,66 +78,54 @@ public class PlaneController : MonoBehaviour
                 {
                     rb.AddForce(transform.right * maxFlyingForce, ForceMode2D.Impulse);
                 }
+
                 holdingTimeCnter = 0;
+                windRight.SetActive(false);
             }
 
             if (Input.GetKeyUp(KeyCode.W))
             {
-                if (holdingTimeCnter < holdingTimeThreshold * 0.5f)
-                {
-                    currentFlyingForce = holdingTimeCnter * maxFlyingForce * 0.3f;//
-                    rb.AddForce(transform.up * currentFlyingForce, ForceMode2D.Impulse);
-                }
-                else
-                {
-                    currentFlyingForce = holdingTimeCnter * maxFlyingForce;
-                    _currentRadius += radiusSlope * holdingTimeCnter; // (_holdingTimeCnter - 0.5f)
-                    Debug.Log(_currentRadius);
-                    _spiralStrength = currentFlyingForce; 
-                    isSpiraling = true;
+                float holdingTimeRatio = Mathf.InverseLerp(0, holdingTimeThreshold, holdingTimeCnter);
+                float currentRadius = Mathf.Lerp(minSpiralRadius, maxSpiralRadius, holdingTimeRatio);
 
-                    if (_currentRadius < minSpiralRadius)
-                    {
-                        _currentRadius = minSpiralRadius;
-                    }
-                    else if (_currentRadius > maxSpiralRadius)
-                    {
-                        _currentRadius = maxSpiralRadius;
-                    }
-
-                    spiralSpeed = Mathf.Sqrt(currentFlyingForce * _currentRadius);
-                    rb.velocity = new Vector2(spiralSpeed, 0f);
-                }
-
-                _currentRadius = minSpiralRadius;
-                currentFlyingForce = 0f;
+                spiralCenter = (Vector2)transform.position + new Vector2(0, currentRadius);
+                    
+                isSpiraling = true;
+                angleRotated = 0f; 
                 holdingTimeCnter = 0;
+                windUp.SetActive(false);
             }
 
             if (isSpiraling)
             {
-                rb.gravityScale = 0f;
-                var perpendicular = new Vector2(-lastVelocity.y, lastVelocity.x).normalized; // 获得与速度方向垂直的向心力方向
-                rb.AddForce(perpendicular * _spiralStrength, ForceMode2D.Force);
+                rb.gravityScale = 0;
+                float step = spiralSpeed * Time.deltaTime;
 
-                lastVelocity = rb.velocity;
+                
+                float rotationThisFrame = spiralSpeed * Time.deltaTime;
+                angleRotated += rotationThisFrame;
 
-                // The angle of the plane internal rotation
-                var angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.RotateAround(spiralCenter, Vector3.forward, rotationThisFrame);
 
-                if (_previousAngle < 0 && angle >= 0) // detect if the plane has rotated one circle 
+                if (transform.position.y > previousPosition.y)
                 {
-                    isSpiraling = false;
-                    angle = 0;
-                    rb.gravityScale = 1f; // set the gravity back to make the plane drop
+                    spiralSpeed = Mathf.Max(spiralSpeed - Time.deltaTime * 80f, minSpiralSpeed); 
+                }
+                else
+                {
+                    spiralSpeed = Mathf.Min(spiralSpeed + Time.deltaTime * 80f, maxSpiralSpeed); 
                 }
 
-                _previousAngle = angle;
+                previousPosition = transform.position; 
+
+                if (angleRotated >= 360f)
+                {
+                    rb.gravityScale = 1f; 
+                    isSpiraling = false;
+                }
             }
         }
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -124,5 +138,19 @@ public class PlaneController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground")) grounded = false;
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Bound") || other.CompareTag("RedArea"))
+        {   
+            rb.velocity = initialVelocity;
+            rb.angularVelocity = initialAngularVelocity;
+            transform.rotation = initialRotation;
+
+            rb.gravityScale = 1f; 
+            isSpiraling = false;
+            windUp.SetActive(false);
+            windRight.SetActive(false);
+        }
     }
 }
