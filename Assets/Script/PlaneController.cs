@@ -17,6 +17,8 @@ public class PlaneController : MonoBehaviour
     [HideInInspector] public float holdingTimeCnter;
     private Vector2 spiralCenter;
     private bool isSpiraling;
+    
+    //飞机自身旋转角度
     private float angleRotated = 0f;
 
     private Vector2 previousPosition;
@@ -85,9 +87,12 @@ public class PlaneController : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.W))
             {
+                
+                //在最小和最大半径范围内返回半径数值
                 float holdingTimeRatio = Mathf.InverseLerp(0, holdingTimeThreshold, holdingTimeCnter);
                 float currentRadius = Mathf.Lerp(minSpiralRadius, maxSpiralRadius, holdingTimeRatio);
 
+                //当前坐标向上半径大小，获取圆心位置
                 spiralCenter = (Vector2)transform.position + new Vector2(0, currentRadius);
                     
                 isSpiraling = true;
@@ -101,23 +106,27 @@ public class PlaneController : MonoBehaviour
                 rb.gravityScale = 0;
                 float step = spiralSpeed * Time.deltaTime;
 
-                
-                float rotationThisFrame = spiralSpeed * Time.deltaTime;
-                angleRotated += rotationThisFrame;
+                //每一帧的旋转角度
+                float deltaRotation = spiralSpeed * Time.deltaTime;
+                angleRotated += deltaRotation;
 
-                transform.RotateAround(spiralCenter, Vector3.forward, rotationThisFrame);
+                transform.RotateAround(spiralCenter, Vector3.forward, deltaRotation);
 
+                //前半圈速度小，且大于最小速度
                 if (transform.position.y > previousPosition.y)
                 {
                     spiralSpeed = Mathf.Max(spiralSpeed - Time.deltaTime * 80f, minSpiralSpeed); 
                 }
                 else
                 {
+                    //后半圈速度大，且小于最大速度
                     spiralSpeed = Mathf.Min(spiralSpeed + Time.deltaTime * 80f, maxSpiralSpeed); 
                 }
-
+                
                 previousPosition = transform.position; 
 
+                
+                //转完一圈
                 if (angleRotated >= 360f)
                 {
                     rb.gravityScale = 1f; 
@@ -139,6 +148,8 @@ public class PlaneController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground")) grounded = false;
     }
+    
+    
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Bound") || other.CompareTag("RedArea"))
