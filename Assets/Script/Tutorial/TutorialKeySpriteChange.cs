@@ -10,15 +10,11 @@ public class TutorialKeySpriteChange : MonoBehaviour
     public Sprite blackW;
     private Sprite originalW;
     
-    public GameObject space;
-    public Sprite blackSpace;
-    private Sprite originalSpace;
 
     private void Start()
     {
         originalD = d.GetComponent<SpriteRenderer>().sprite;
         originalW = w.GetComponent<SpriteRenderer>().sprite;
-        originalSpace = space.GetComponent<SpriteRenderer>().sprite;
     }
 
     private void Update()
@@ -33,10 +29,7 @@ public class TutorialKeySpriteChange : MonoBehaviour
             ChangeSprite(w, blackW);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            ChangeSprite(space, blackSpace);
-        }
+       
 
         if (Input.GetKeyUp(KeyCode.D))
         {
@@ -46,11 +39,6 @@ public class TutorialKeySpriteChange : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.W))
         {
             RestoreSprite(w, originalW);
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            RestoreSprite(space, originalSpace);
         }
     }
 

@@ -1,123 +1,140 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlaneController : MonoBehaviour
 {
-    public float spiralSpeed;
-    public float radiusDiameter; //此数值和实半径大小成反比，若要调整飞行半径，只需要调整这个数值
+    public float spiralSpeed = 100f; // 控制旋转速度
+    public float maxFlyingForce = 20f;
+    public float minSpiralRadius = 5f;
+    public float maxSpiralRadius = 50f;
+    public float holdingTimeThreshold = 1f;
+    public float maxSpiralSpeed;
+    public float minSpiralSpeed;
 
-    public float holdingTimeThreshold = 0.5f; //按下多久
+    public GameObject windUp;
+    public GameObject windRight;
+
     [HideInInspector] public float holdingTimeCnter;
-    private float _previousAngle;
+    private Vector2 spiralCenter;
+    private bool isSpiraling;
+    
+    //飞机自身旋转角度
+    private float angleRotated = 0f;
 
-    private float _previousHeight;
-    private float _spiralStrength;
+    private Vector2 previousPosition;
+
     private float currentFlyingForce;
     private bool grounded;
-    private bool isSpiraling;
-    private Vector2 lastVelocity;
 
-    //对于
-    public float maxFlyingForceHorizontal;
-    public float maxFlyingForceSpiral;
-
-    private bool _motionChosen = false;
-    private bool _spiralMotionChosen = false;
-    private bool _horizontalMotionChosen = false;
-    private bool _speedZero = false;
-    
+    private Quaternion initialRotation;
+    private Vector2 initialVelocity;
+    private float initialAngularVelocity;
+ 
     private Rigidbody2D rb;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        // _currentRadius = maxSpiralRadius;
+        previousPosition = transform.position;
+
+        initialRotation = transform.rotation;
+        initialVelocity = rb.velocity;
+        initialAngularVelocity = rb.angularVelocity;
+
+        windUp.SetActive(false);
+        windRight.SetActive(false);
     }
 
     private void Update()
     {
-        if(spee
         if (!grounded)
-        {
-            if (!_motionChosen)
+        {   
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
             {
-                if (Input.GetKeyDown(KeyCode.W))
+                if (Input.GetKey(KeyCode.D))
                 {
-                    _speedZero = true;
-                    rb.velocity = Vector2.zero;
-                    _spiralMotionChosen = true;
-                    _motionChosen = true;
-                    Debug.Log("spiralchosen");
+                    windRight.SetActive(true);
+                    windUp.SetActive(false);
                 }
-                else if (Input.GetKeyDown(KeyCode.D))
+                else if (Input.GetKey(KeyCode.W))
                 {
-                    _speedZero = true;
-                    _horizontalMotionChosen = true;
-                    _motionChosen = true;
-                    Debug.Log("horizontalchosen");
+                    windUp.SetActive(true);
+                    windRight.SetActive(false);
                 }
+
+                isSpiraling = false;
+                rb.gravityScale = 1f; 
+                rb.velocity = Vector2.zero;
+                transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                holdingTimeCnter += Time.deltaTime;
+            }
+            
+            if (Input.GetKeyUp(KeyCode.D))
+            {
+                if (holdingTimeCnter < holdingTimeThreshold)
+                {
+                    currentFlyingForce = holdingTimeCnter * maxFlyingForce;
+                    rb.AddForce(transform.right * currentFlyingForce, ForceMode2D.Impulse);
+                }
+                else
+                {
+                    rb.AddForce(transform.right * maxFlyingForce, ForceMode2D.Impulse);
+                }
+
+                holdingTimeCnter = 0;
+                windRight.SetActive(false);
             }
 
-            if (_motionChosen) //如果玩家按下方向选择键
+            if (Input.GetKeyUp(KeyCode.W))
             {
-                if (Input.GetKey(KeyCode.Space))
-                {
-                    rb.velocity = Vector2.zero;
-                    holdingTimeCnter += Time.deltaTime;
-                    transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
-                }
+                
+                //在最小和最大半径范围内返回半径数值
+                float holdingTimeRatio = Mathf.InverseLerp(0, holdingTimeThreshold, holdingTimeCnter);
+                float currentRadius = Mathf.Lerp(minSpiralRadius, maxSpiralRadius, holdingTimeRatio);
 
-                if (Input.GetKeyUp(KeyCode.Space))
-                {
-                    if (_horizontalMotionChosen) //选择平抛模式
-                    {
-                        currentFlyingForce = holdingTimeCnter * maxFlyingForceHorizontal;
-                        rb.AddForce(transform.right * currentFlyingForce, ForceMode2D.Impulse);
-                        _motionChosen = false;
-                        _horizontalMotionChosen = false;
-                    } else if (_spiralMotionChosen) //选择旋转模式
-                    {
-                        currentFlyingForce = holdingTimeCnter * maxFlyingForceSpiral * radiusDiameter;
-
-                        _spiralStrength = currentFlyingForce;
-                        isSpiraling = true;
-
-                        rb.velocity = new Vector2(spiralSpeed, 0f);
-                    }
-                    currentFlyingForce = 0f;
+                //当前坐标向上半径大小，获取圆心位置
+                spiralCenter = (Vector2)transform.position + new Vector2(0, currentRadius);
                     
-                   
-                    
-                }
-               
+                isSpiraling = true;
+                angleRotated = 0f; 
+                holdingTimeCnter = 0;
+                windUp.SetActive(false);
             }
 
             if (isSpiraling)
             {
-                rb.gravityScale = 0f;
-                var perpendicular = new Vector2(-lastVelocity.y, lastVelocity.x).normalized; // 获得与速度方向垂直的向心力方向
-                rb.AddForce(perpendicular * _spiralStrength, ForceMode2D.Force);
+                rb.gravityScale = 0;
+                float step = spiralSpeed * Time.deltaTime;
 
-                lastVelocity = rb.velocity;
+                //每一帧的旋转角度
+                float deltaRotation = spiralSpeed * Time.deltaTime;
+                angleRotated += deltaRotation;
 
-                // The angle of the plane internal rotation
-                var angle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
-                transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+                transform.RotateAround(spiralCenter, Vector3.forward, deltaRotation);
 
-                if (_previousAngle < 0 && angle >= 0) // detect if the plane has rotated one circle 
+                //前半圈速度小，且大于最小速度
+                if (transform.position.y > previousPosition.y)
                 {
-                    isSpiraling = false;
-                    _spiralMotionChosen = false;
-                    _motionChosen = false;
-                    angle = 0;
-                    rb.gravityScale = 1f; // set the gravity back to make the plane drop
+                    spiralSpeed = Mathf.Max(spiralSpeed - Time.deltaTime * 80f, minSpiralSpeed); 
                 }
+                else
+                {
+                    //后半圈速度大，且小于最大速度
+                    spiralSpeed = Mathf.Min(spiralSpeed + Time.deltaTime * 80f, maxSpiralSpeed); 
+                }
+                
+                previousPosition = transform.position; 
 
-                _previousAngle = angle;
+                
+                //转完一圈
+                if (angleRotated >= 360f)
+                {
+                    rb.gravityScale = 1f; 
+                    isSpiraling = false;
+                }
             }
-           
         }
     }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
@@ -130,5 +147,21 @@ public class PlaneController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground")) grounded = false;
+    }
+    
+    
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Bound") || other.CompareTag("RedArea"))
+        {   
+            rb.velocity = initialVelocity;
+            rb.angularVelocity = initialAngularVelocity;
+            transform.rotation = initialRotation;
+
+            rb.gravityScale = 1f; 
+            isSpiraling = false;
+            windUp.SetActive(false);
+            windRight.SetActive(false);
+        }
     }
 }
