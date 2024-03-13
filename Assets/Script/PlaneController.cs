@@ -152,7 +152,7 @@ public class PlaneController : MonoBehaviour
     float t = 0f;
     while (t < 0.5f)
     {
-        t += Time.deltaTime * 1f;
+        t += Time.deltaTime * 0.7f;
         transform.rotation = Quaternion.Slerp(transform.rotation, initialRotation, t);
         yield return null;
     }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
+using UnityEngine.UI;
+
 public class CameraSwitcher : MonoBehaviour
 {
     public CinemachineVirtualCamera camera1;
@@ -12,31 +14,47 @@ public class CameraSwitcher : MonoBehaviour
     public Camera camera3;
     public Camera camera4;
     public Camera camera5;
+    public Camera camera6;
 
     private bool isPlane = false;
     private bool hit = false;
     private bool goCamera3 = false;
     private bool goCamera4 = false;
     private bool goCamera5 = false;
+    private bool goCamera6 = false;
 
     public Transform respawnPointCamera3;
     public Transform respawnPointCamera4;
     public Transform respawnPointCamera5;
+    public Transform respawnPointCamera6;
     
     public Collider2D endZoneCamera2;
     public Collider2D endZoneCamera3;
     public Collider2D endZoneCamera4;
+    public Collider2D endZoneCamera5;
+    public Collider2D finish;
     
     public Rigidbody2D planeRigidbody;
     private Quaternion initialRotation;
 
     public PlaneController planeController;
 
+
+    public Image blackScreen;
+    public Image gameOverImage;
+    public float fadeDuration = 1f;
+    public float displayImageDuration = 2f;
+
+    private bool isGameOver = false;
+
     void Start()
     {
         // 初始时只激活 Player 相关相机
         SwitchToCamera1();
         initialRotation = transform.rotation;
+
+        blackScreen.gameObject.SetActive(false);
+        gameOverImage.gameObject.SetActive(false);
     }
 
     void Update()
@@ -105,6 +123,14 @@ public class CameraSwitcher : MonoBehaviour
         goCamera4 = false;
     }
 
+    void SwitchToCamera6()
+    {
+        camera5.gameObject.SetActive(false);
+        camera6.gameObject.SetActive(true);
+        goCamera6 = true;
+        goCamera5 = false;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other == endZoneCamera2)
@@ -128,6 +154,10 @@ public class CameraSwitcher : MonoBehaviour
                 {
                     transform.position = respawnPointCamera5.position;
                 }
+                else if (camera6.gameObject.activeSelf)
+                {
+                    transform.position = respawnPointCamera6.position;
+                }
 
                 planeController.isSpiraling = false;
                 planeRigidbody.gravityScale = 1f; 
@@ -145,6 +175,62 @@ public class CameraSwitcher : MonoBehaviour
             {
                 SwitchToCamera5();
             }
+            if (other == endZoneCamera5)
+            {
+                SwitchToCamera6();
+            }
+            if (other == finish)
+            {
+                if (!IsGameOver())
+                {
+                    Time.timeScale = 0f;
+                    ShowGameOverScreen();
+                }
+            }
         }
     }
+    
+    public void ShowGameOverScreen()
+    {
+        isGameOver = true;
+        StartCoroutine(FadeOutAndShowImage());
+    }
+
+    IEnumerator FadeOutAndShowImage()
+    {
+        blackScreen.gameObject.SetActive(true);
+
+        float timer = 0f;
+        Color initialColor = blackScreen.color;
+        Color targetColor = new Color(initialColor.r, initialColor.g, initialColor.b, 1f);
+
+        while (timer < fadeDuration)
+        {
+            float progress = timer / fadeDuration;
+            blackScreen.color = Color.Lerp(initialColor, targetColor, progress);
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(displayImageDuration);
+
+        gameOverImage.gameObject.SetActive(true);
+
+        while (Time.timeScale == 0f)
+        {
+            yield return null;
+        }
+
+        gameOverImage.gameObject.SetActive(false);
+        blackScreen.color = initialColor;
+        blackScreen.gameObject.SetActive(false);
+
+        isGameOver = false;
+    }
+
+    public bool IsGameOver()
+    {
+        return isGameOver;
+    }
+
 }
