@@ -69,7 +69,7 @@ public class TextDisplay : MonoBehaviour
         float duration = 1f;
         float elapsedTime = 0f;
         Vector3 originalScale = popupImage.transform.localScale;
-        Vector3 targetScale = new Vector3(1.5f, 1.5f, 1.5f);
+        Vector3 targetScale = new Vector3(5f, 5f, 5f);
         Vector3 originalTextPos = textMeshPro.rectTransform.localPosition;
         Vector3 targetTextPos = originalTextPos + new Vector3(0f, 20f, 0f);
 

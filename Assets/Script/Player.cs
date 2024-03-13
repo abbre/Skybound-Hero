@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
         canControl = false;
         planeController.enabled = true;
         this.enabled = false;  
-        cameraSwitcher.enabled = false;         
+        cameraSwitcher.enabled = false;
         plane.SetActive(true); // 显示飞机
     }
 

@@ -17,7 +17,7 @@ public class PlaneController : MonoBehaviour
 
     [HideInInspector] public float holdingTimeCnter;
     private Vector2 spiralCenter;
-    private bool isSpiraling;
+    [HideInInspector] public bool isSpiraling;
     private bool isRotating = false;
     
     //飞机自身旋转角度
