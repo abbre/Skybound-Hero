@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.Serialization;
 
 public class PlaneController : MonoBehaviour
@@ -17,6 +18,7 @@ public class PlaneController : MonoBehaviour
     [HideInInspector] public float holdingTimeCnter;
     private Vector2 spiralCenter;
     private bool isSpiraling;
+    private bool isRotating = false;
     
     //飞机自身旋转角度
     private float angleRotated = 0f;
@@ -49,6 +51,14 @@ public class PlaneController : MonoBehaviour
     {
         if (!grounded)
         {   
+            if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.W))
+            {
+                if (!isRotating)
+                {
+                    StartCoroutine(RotateToInitialRotation());
+                }
+            }
+
             if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.W))
             {
                 if (Input.GetKey(KeyCode.D))
@@ -65,7 +75,8 @@ public class PlaneController : MonoBehaviour
                 isSpiraling = false;
                 rb.gravityScale = 1f; 
                 rb.velocity = Vector2.zero;
-                transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
+
+                //transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
                 holdingTimeCnter += Time.deltaTime;
             }
             
@@ -87,7 +98,6 @@ public class PlaneController : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.W))
             {
-                
                 //在最小和最大半径范围内返回半径数值
                 float holdingTimeRatio = Mathf.InverseLerp(0, holdingTimeThreshold, holdingTimeCnter);
                 float currentRadius = Mathf.Lerp(minSpiralRadius, maxSpiralRadius, holdingTimeRatio);
@@ -135,6 +145,19 @@ public class PlaneController : MonoBehaviour
             }
         }
     }
+
+    private IEnumerator RotateToInitialRotation()
+{
+    isRotating = true;
+    float t = 0f;
+    while (t < 0.5f)
+    {
+        t += Time.deltaTime * 1f;
+        transform.rotation = Quaternion.Slerp(transform.rotation, initialRotation, t);
+        yield return null;
+    }
+    isRotating = false;
+}
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))

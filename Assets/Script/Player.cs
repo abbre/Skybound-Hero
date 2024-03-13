@@ -5,32 +5,28 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    private bool isGrounded;
     private bool isMoving;
-    private bool isFlying; 
-    private bool isHurt; 
-    private bool inWater; 
-    private bool canControl; // 新增控制方式的开关
-    private bool hasAppliedForce; // 检查是否已经施加过力
-    public GameObject childObject; // 子物体的引用
-    public Sprite plane; 
-    public Sprite boat;
-    public bool helpText;
-
+    private bool canControl = true; 
+    private float pressTime; 
+    
     private Rigidbody2D rb;
     public Animator anim;
-    private WaveMovement waveMovement;
-    public GameObject wave;
-
-    public EasyPlaneController easyPlaneController; // 引用另一个脚本
+    
+    public GameObject plane; 
+    public Collider2D planeFly; 
+    private bool isInsideTrigger = false;
+   
+    public PlaneController planeController; 
+    public CameraSwitcher cameraSwitcher; 
+    public GameObject childObject;
 
     public void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponentInChildren<Animator>();
-        waveMovement = wave.GetComponent<WaveMovement>(); 
-        canControl = true;
-        helpText = false;
+        plane.SetActive(false); // 隐藏飞机
+
+        planeController.enabled = false;
     }
 
     void Update()
@@ -42,34 +38,10 @@ public class Player : MonoBehaviour
         {   
             StartChildAnimation();
 
-            isGrounded = Physics2D.OverlapCircle(transform.position, 0.2f, LayerMask.GetMask("Ground"));
-
-            // 检查角色是否在地面上，不在地面上且速度超过阈值时触发 "hurt" 动画
-            if (!isGrounded && Mathf.Abs(rb.velocity.y) > 2f)
-            {
-                isHurt = true;
-                anim.SetBool("isHurt", true);
-            }
-            else
-            {
-                isHurt = false;
-                anim.SetBool("isHurt", false);
-            }
             float horizontalInput = Input.GetAxis("Horizontal");
-            if (!inWater && canControl)
-            {
-                rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
-            }
+            rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
 
-            if (horizontalInput != 0)
-            {
-                isMoving = true;
-            }
-            else
-            {
-                isMoving = false;
-            }
-
+            isMoving = (horizontalInput != 0);
             anim.SetBool("isMoving", isMoving);
 
             // 根据水平输入的方向翻转角色的朝向
@@ -82,50 +54,48 @@ public class Player : MonoBehaviour
             {
                 anim.SetBool("isMoving", false);
             }
-            
-            if (inWater)
-            {
-                anim.SetBool("inWater", true);
-                anim.SetBool("isMoving", false);
-                anim.SetBool("isHurt", false);
-            }
-            else
-            {
-                anim.SetBool("inWater", false);
-            }
-
+        
             
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                pressTime = Time.time;
                 anim.SetBool("isFlying", true);
             }
 
             if (Input.GetKeyUp(KeyCode.Space))
             {
-                isFlying = false;
                 anim.SetBool("isFlying", false);
             }
-            
-            if (Input.GetKeyDown(KeyCode.I))
-            {   
-                StopChildAnimation();
-                ChangeChildSprite();
-                // 获取所有与角色发生了触发器碰撞的物体
-                
-                anim.SetBool("isMoving", false);
-                anim.SetBool("isHurt", false);
-                canControl = false; // 切换控制方式
-                
-                hasAppliedForce = true;
-                canControl = false;
-                this.enabled = false;
-                easyPlaneController.enabled = true;
-                easyPlaneController.Start();
-                if (inWater)
-                {
-                    waveMovement.enabled = true;
-                }
+
+            if (Input.GetKey(KeyCode.Space) && Time.time - pressTime >= 2.5f && isInsideTrigger)
+            {
+                StartFlying();
             }
+
+        }
+    }
+
+    void StartFlying()
+    {
+        canControl = false;
+        planeController.enabled = true;
+        this.enabled = false;  
+        cameraSwitcher.enabled = false;         
+        plane.SetActive(true); // 显示飞机
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other == planeFly)
+        {
+            isInsideTrigger = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other == planeFly)
+        {
+            isInsideTrigger = false;
         }
     }
 
@@ -140,57 +110,4 @@ public class Player : MonoBehaviour
             }
         }
     }
-
-    void StopChildAnimation()
-    {
-        if (childObject != null)
-        {
-            Animator childAnimator = childObject.GetComponent<Animator>();
-            if (childAnimator != null)
-            {
-                childAnimator.enabled = false; // 禁用动画组件以停止播放动画
-            }
-        }
-    }
-    void ChangeChildSprite()
-    {
-        if (childObject != null)
-        {
-            SpriteRenderer childRenderer = childObject.GetComponent<SpriteRenderer>();
-            if (childRenderer != null && plane != null && boat != null)
-            {
-                childRenderer.sprite = inWater ? boat : plane;
-            }
-        }
-    }
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Water") || other.CompareTag("Ground"))
-        {
-            helpText = true;
-            Debug.Log("HelpText is set to true");
-        }
-
-        if (other.CompareTag("Water"))
-        {
-            inWater = true;
-            waveMovement.enabled = true;
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Water") || other.CompareTag("Ground"))
-        {
-            helpText = false;
-            Debug.Log("HelpText is set to false");
-        }
-
-        if (other.CompareTag("Water"))
-        {
-            inWater = false;
-            waveMovement.enabled = false;
-        }
-    }
-
 }

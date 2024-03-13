@@ -1,51 +1,44 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class TextDisplay : MonoBehaviour
 {
     public TextMeshProUGUI textMeshPro;
-    public Collider2D trigger1;
-    public Collider2D trigger2;
-    public Collider2D trigger3;
-
-    private bool showMoveText = true;
+    public Collider2D pressI;
     private bool showInteractText = false;
-    private bool showControlText = false;
-    private bool showSailText = false;
-    private bool showText = false;
-    private bool showHelpText = false;
+    public GameObject arrow;
+    public Image blackImage;
 
     public Player player; 
+    public GameObject popupImage;
+
+
 
     void Start()
     {
-        // 显示 "Press A and D To Move" 文字
-        StartCoroutine(ShowText("Press A and D To Move"));
-
-        // 开始监听按键事件
-        StartCoroutine(CheckInput());
+        popupImage.SetActive(false);
+        blackImage.gameObject.SetActive(false);
+        HideText();
     }
 
-    IEnumerator CheckInput()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        while (true)
+        if (other == pressI && !showInteractText)
         {
-            // 当按下I时，显示 "Use Space To Control" 文字
-            if (Input.GetKeyDown(KeyCode.I) && !showControlText)
-            {
-                showControlText = true;
-                StartCoroutine(ShowText("Use Space To Control"));
-            }
+            // 当玩家角色进入触发器时显示文字，并且只显示一次
+            showInteractText = true;
+        }
+    }
 
-            if (player != null && player.helpText && !showHelpText)
-            {
-                showHelpText = true;
-                StartCoroutine(ShowText("Press I To Interact"));
-                Debug.Log("Showing help text");
-            }
-
-            yield return null;
+    void Update()
+    {
+        if (showInteractText && Input.GetKeyDown(KeyCode.I))
+        {   
+            // 当按下 "i" 键时隐藏文字
+            StartCoroutine(PopupImage());
+            arrow.SetActive(false);
         }
     }
 
@@ -53,30 +46,49 @@ public class TextDisplay : MonoBehaviour
     {
         textMeshPro.text = message;
         textMeshPro.enabled = true;
-        yield return new WaitForSeconds(3f); // 停留两秒
-        textMeshPro.enabled = false;
+        yield return new WaitForSeconds(3f); // 停留三秒
+        HideText();
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void HideText()
     {
-        // 碰撞到collider trigger 1时，显示 "Press I To Interact" 文字
-        if (other == trigger1 && !showInteractText)
+        textMeshPro.enabled = false;
+        showInteractText = false;
+    }
+
+    IEnumerator PopupImage()
+    {
+        textMeshPro.text = "A letter: To my grandparents";
+        textMeshPro.enabled = true;
+
+        popupImage.SetActive(true);
+        blackImage.gameObject.SetActive(true);
+        blackImage.color = new Color(0f, 0f, 0f, 0.5f); // 设置遮罩的透明度
+
+        // 放大图片
+        float duration = 1f;
+        float elapsedTime = 0f;
+        Vector3 originalScale = popupImage.transform.localScale;
+        Vector3 targetScale = new Vector3(1.5f, 1.5f, 1.5f);
+        Vector3 originalTextPos = textMeshPro.rectTransform.localPosition;
+        Vector3 targetTextPos = originalTextPos + new Vector3(0f, 20f, 0f);
+
+        while (elapsedTime < duration)
         {
-            showInteractText = true;
-            StartCoroutine(ShowText("Press I To Interact"));
-        }
-        // 碰撞到collider trigger 2时，显示 "Press S To Sail" 文字
-        else if (other == trigger2 && !showSailText)
-        {
-            showSailText = true;
-            StartCoroutine(ShowText("Press S To Sail"));
+            float t = elapsedTime / duration;
+            popupImage.transform.localScale = Vector3.Lerp(originalScale, targetScale, t);
+            textMeshPro.rectTransform.localPosition = Vector3.Lerp(originalTextPos, targetTextPos, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
 
-        if (other == trigger3 && !showText)
-        {
-            showText = true;
-            StartCoroutine(ShowText("You have finished the tutorial"));
-            Time.timeScale = 0f;
-        }
+        // 显示文字
+        
+        yield return new WaitForSeconds(1f); // 显示三秒钟
+
+        // 隐藏图片、文字和遮罩，回到正常游戏
+        HideText();
+        popupImage.SetActive(false);
+        blackImage.gameObject.SetActive(false);
     }
 }
