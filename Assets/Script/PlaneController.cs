@@ -89,7 +89,7 @@ public class PlaneController : MonoBehaviour
                 }
                 else
                 {
-                    rb.AddForce(transform.right * maxFlyingForce, ForceMode2D.Impulse);
+                    rb.AddForce(transform.right * maxFlyingForce, ForceMode2D.Impulse);//velocitychange
                 }
 
                 holdingTimeCnter = 0;
@@ -152,8 +152,8 @@ public class PlaneController : MonoBehaviour
     float t = 0f;
     while (t < 0.5f)
     {
-        t += Time.deltaTime * 0.7f;
-        transform.rotation = Quaternion.Slerp(transform.rotation, initialRotation, t);
+        t += Time.deltaTime;
+        transform.rotation = Quaternion.Slerp(transform.rotation, initialRotation, t * 0.7f);
         yield return null;
     }
     isRotating = false;
