@@ -187,4 +187,6 @@ public class PlaneController : MonoBehaviour
             windRight.SetActive(false);
         }
     }
+    
+    
 }
