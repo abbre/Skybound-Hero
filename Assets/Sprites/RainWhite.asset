@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
+  m_Name: RainWhite
+  m_EditorClassIdentifier: 
+  m_AnimatedSprites:
+  - {fileID: 2131363741, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: -1544939604, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: -317611107, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: -347650755, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: -610755218, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: 1774052470, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: -1783194174, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  - {fileID: 1205652003, guid: 349c2458dd3c76e47aafc09525378b69, type: 3}
+  m_MinSpeed: 10
+  m_MaxSpeed: 10
+  m_AnimationStartTime: 0
+  m_AnimationStartFrame: 0
+  m_TileColliderType: 0
+  m_TileAnimationFlags: 0
