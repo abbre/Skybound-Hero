@@ -12,7 +12,6 @@ TagManager:
   - Object
   - RedArea
   - Bound
-  - Rain
   layers:
   - Default
   - TransparentFX
