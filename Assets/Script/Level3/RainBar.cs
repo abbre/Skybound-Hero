@@ -59,4 +59,10 @@ private void OnTriggerExit2D(Collider2D other)
         _inRain = false;
     }
 }
+
+public void ResetRainBar()
+{
+    rainSlider.value = rainSlider.maxValue;
+    Fill.color = Color.white;
+}
 }
