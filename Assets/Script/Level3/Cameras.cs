@@ -20,7 +20,15 @@ public class Cameras : MonoBehaviour
     public GameObject rain;
     public Image introImage; // 引入的图片
     public Image endImage;
+    public Image image1; // 第一张图片
+    public Image image2; // 第二张图片
     public TextMeshProUGUI endText;
+
+    public AudioClip rainSound;
+    public AudioClip thunderSound;
+    public AudioClip bgm;
+
+    private AudioSource audioSource;
 
     private float startTime;
     private float endTime;
@@ -31,6 +39,13 @@ public class Cameras : MonoBehaviour
         InitializeCameras();
         StartCoroutine(IntroSequence()); // 开始引入序列
         startTime = Time.time; // 记录游戏开始时间
+
+        audioSource = GetComponent<AudioSource>();
+
+        // 播放雨声
+        audioSource.clip = rainSound;
+        audioSource.loop = true;
+        audioSource.Play();
     }
 
     private void Update()
@@ -113,7 +128,7 @@ public class Cameras : MonoBehaviour
                 {
                     // Teleport player to the corresponding end point for the current camera
                     transform.position = endPoints[currentCameraIndex].position;
-                    if (currentCameraIndex == 6)
+                    if (currentCameraIndex == 8)
                     {
                         endTime = Time.time; // 记录游戏结束时间
                         StartCoroutine(FinalSequence());
@@ -134,6 +149,10 @@ public class Cameras : MonoBehaviour
         {
             // Enable the white screen
             whiteScreen.SetActive(true);
+
+            audioSource.clip = thunderSound;
+            audioSource.loop = false;
+            audioSource.Play();
 
             if (rain != null)
             {
@@ -163,10 +182,19 @@ public class Cameras : MonoBehaviour
                 SetScreenAlpha(whiteScreen, alpha);
                 yield return null;
             }
-            StartCoroutine(MoveBird(5f));
+            StartCoroutine(MoveBird(6f));
             
             // Disable the white screen
             whiteScreen.SetActive(false);
+
+            while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+
+            audioSource.clip = bgm; 
+            audioSource.loop = true;
+            audioSource.Play();
         }
     }
 
@@ -189,7 +217,7 @@ public class Cameras : MonoBehaviour
         if (bird != null)
         {
             // Target position for the bird
-            Vector3 targetPosition = new Vector3(455f, bird.transform.position.y, bird.transform.position.z);
+            Vector3 targetPosition = new Vector3(398.2f, bird.transform.position.y, bird.transform.position.z);
 
             // Start position of the bird
             Vector3 startPosition = bird.transform.position;
@@ -279,6 +307,41 @@ public class Cameras : MonoBehaviour
                 float alpha = Mathf.Lerp(0f, 1f, timer / (duration * 0.25f));
                 SetImageAlpha(endImage, alpha);
                 yield return null;
+            }
+
+            yield return new WaitForSeconds(1f);
+
+            // Show Image 1
+            if (image1 != null)
+            {
+                image1.gameObject.SetActive(true);
+                timer = 0f;
+                while (timer < duration)
+                {
+                    timer += Time.deltaTime;
+                    float alpha = Mathf.Lerp(0f, 1f, timer / (duration * 0.25f));
+                    SetImageAlpha(image1, alpha);
+                    yield return null;
+                }
+
+                yield return new WaitForSeconds(2f);
+            }
+
+            // Show Image 2
+            if (image2 != null)
+            {
+                image2.gameObject.SetActive(true);
+                timer = 0f;
+                while (timer < duration)
+                {
+                    timer += Time.deltaTime;
+                    float alpha = Mathf.Lerp(0f, 1f, timer / (duration * 0.25f));
+                    SetImageAlpha(image2, alpha);
+                    yield return null;
+                }
+
+                yield return new WaitForSeconds(2f);
+
             }
 
             Time.timeScale = 0f;
