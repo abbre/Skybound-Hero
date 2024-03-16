@@ -73,6 +73,7 @@ public class PlaneController : MonoBehaviour
                 }
 
                 isSpiraling = false;
+                rb.gravityScale = 1f; 
                 rb.velocity = Vector2.zero;
                 
                 holdingTimeCnter += Time.deltaTime;
