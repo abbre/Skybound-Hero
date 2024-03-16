@@ -73,10 +73,8 @@ public class PlaneController : MonoBehaviour
                 }
 
                 isSpiraling = false;
-                rb.gravityScale = 1f; 
                 rb.velocity = Vector2.zero;
-
-                //transform.rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                
                 holdingTimeCnter += Time.deltaTime;
             }
             
