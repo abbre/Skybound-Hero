@@ -1255,7 +1255,7 @@ Transform:
   m_GameObject: {fileID: 119242223}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.0040740967, y: -1.4833508, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1987,7 +1987,7 @@ Camera:
   far clip plane: 5000
   field of view: 40
   orthographic: 1
-  orthographic size: 5.39
+  orthographic size: 3
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -2012,7 +2012,7 @@ Transform:
   m_GameObject: {fileID: 181465893}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -71.53718, y: 3.4244785, z: -9.928102}
+  m_LocalPosition: {x: -71.54125, y: 4.9078293, z: -9.928102}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4130,6 +4130,7 @@ GameObject:
   - component: {fileID: 269472476}
   - component: {fileID: 269472475}
   - component: {fileID: 269472480}
+  - component: {fileID: 269472481}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Plane
@@ -4337,6 +4338,21 @@ MonoBehaviour:
   gameOverImage: {fileID: 1516561730}
   fadeDuration: 1
   displayImageDuration: 2
+--- !u!114 &269472481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 269472473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac395b28478b5e24980a0d2d46d68c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planeController: {fileID: 269472475}
+  chargeBar: {fileID: 422795483}
+  barGameObj: {fileID: 963215212}
 --- !u!1 &301614769
 GameObject:
   m_ObjectHideFlags: 0
@@ -51728,7 +51744,6 @@ GameObject:
   m_Component:
   - component: {fileID: 422795481}
   - component: {fileID: 422795483}
-  - component: {fileID: 422795482}
   m_Layer: 5
   m_Name: ChargeBar
   m_TagString: Untagged
@@ -51757,21 +51772,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 2}
   m_SizeDelta: {x: 39.86, y: 7.82}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &422795482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 422795480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac395b28478b5e24980a0d2d46d68c93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planeController: {fileID: 269472475}
-  chargeBar: {fileID: 422795483}
-  barGameObj: {fileID: 963215212}
 --- !u!114 &422795483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52755,7 +52755,7 @@ Camera:
   far clip plane: 5000
   field of view: 40
   orthographic: 1
-  orthographic size: 5.39
+  orthographic size: 3
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -52780,7 +52780,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -71.53718, y: 3.4244785, z: -9.928102}
+  m_LocalPosition: {x: -71.54125, y: 4.9078293, z: -9.928102}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -68027,7 +68027,7 @@ Transform:
   m_GameObject: {fileID: 1511574318}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.0040740967, y: -1.4833508, z: 0}
   m_LocalScale: {x: 0.25714, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

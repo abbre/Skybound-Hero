@@ -13,6 +13,7 @@ TagManager:
   - RedArea
   - Bound
   - Rain
+  - LavaWind
   layers:
   - Default
   - TransparentFX

@@ -2864,6 +2864,7 @@ GameObject:
   - component: {fileID: 1041764084}
   - component: {fileID: 1041764087}
   - component: {fileID: 1041764088}
+  - component: {fileID: 1041764090}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -3063,6 +3064,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.2806792, y: 0.96857685}
   m_EdgeRadius: 0
+--- !u!114 &1041764090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1041764081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac395b28478b5e24980a0d2d46d68c93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  planeController: {fileID: 1041764087}
+  chargeBar: {fileID: 1204355657}
+  barGameObj: {fileID: 1204355654}
 --- !u!1 &1058565364
 GameObject:
   m_ObjectHideFlags: 0
@@ -3495,7 +3511,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1204355655}
   - component: {fileID: 1204355657}
-  - component: {fileID: 1204355656}
   m_Layer: 5
   m_Name: ChargeBar
   m_TagString: Untagged
@@ -3524,21 +3539,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 2}
   m_SizeDelta: {x: 39.86, y: 7.82}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1204355656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204355654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac395b28478b5e24980a0d2d46d68c93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  planeController: {fileID: 1041764087}
-  chargeBar: {fileID: 1204355657}
-  barGameObj: {fileID: 970519496}
 --- !u!114 &1204355657
 MonoBehaviour:
   m_ObjectHideFlags: 0
