@@ -6,7 +6,7 @@ public class RainBar : MonoBehaviour
     public GameObject rainBar;
     public Slider rainSlider;
     public Image Fill;
-    [SerializeField] private float healthDecline = 0.5f;
+    [SerializeField] private float healthDecline = 0.045f;
     private bool _inRain = false;
     public Cameras camera;
 
@@ -19,6 +19,7 @@ public class RainBar : MonoBehaviour
     void Update()
     {
         if (!camera.enableFlash) return;
+
         if (!_inRain)
         {
             rainSlider.value += healthDecline;
