@@ -1,16 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 public class CameraController : MonoBehaviour
 {
+    [Header("Test")]
     public Camera[] cameras; // 摄像机数组
     public Transform[] respawnPoints; // 复活点数组
     [HideInInspector]public int currentCameraIndex = 0; // 当前摄像机索引
+    [Space(10)]
+    [Tooltip("This is Respawn")]
     private bool respawn = false; // 标记是否需要显示第一个红色区域
     public GameObject firstRedArea; // 第一个红色区域对象
     public Image blackoutScreen;
     [HideInInspector] public bool gameStart = false;
+    
 
     private void Start()
     {
@@ -89,7 +94,7 @@ public class CameraController : MonoBehaviour
         yield return new WaitForSeconds(5f); // 在 Camera7 停留
 
         SceneManager.LoadScene("Level1");
-
+ 
 
     }
 

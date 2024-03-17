@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class Cameras : MonoBehaviour
 {
@@ -146,7 +147,7 @@ public class Cameras : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator WhiteScreenTransition(float duration)
+    private IEnumerator WhiteScreenTransition(float duration)
     {
         if (whiteScreen != null)
         {
@@ -216,7 +217,7 @@ public class Cameras : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator MoveBird(float duration)
+    private IEnumerator MoveBird(float duration)
     {
         if (bird != null)
         {
@@ -253,7 +254,7 @@ public class Cameras : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator IntroSequence()
+    private IEnumerator IntroSequence()
     {
         if (introImage != null)
         {
@@ -289,7 +290,7 @@ public class Cameras : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator FinalSequence()
+    private IEnumerator FinalSequence()
     {
         if (endImage != null)
         {
@@ -300,6 +301,10 @@ public class Cameras : MonoBehaviour
                 endText.gameObject.SetActive(true);
                 string timeText = FormatTime(endTime - startTime);
                 endText.text = timeText;
+            }
+            else
+            {
+                Debug.LogWarning("endText is not found!");
             }
 
             // Fade in
