@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-
+using TMPro;
 using UnityEngine.UI;
 
 public class CameraSwitcher : MonoBehaviour
@@ -46,7 +46,10 @@ public class CameraSwitcher : MonoBehaviour
     public float displayImageDuration = 2f;
 
     private bool isGameOver = false;
-
+    public TextMeshProUGUI endText;
+    private float startTime;
+    private float endTime;
+    
     void Start()
     {
         // 初始时只激活 Player 相关相机
@@ -55,10 +58,13 @@ public class CameraSwitcher : MonoBehaviour
 
         blackScreen.gameObject.SetActive(false);
         gameOverImage.gameObject.SetActive(false);
+        
+       
     }
 
     void Update()
     {
+        endTime = Time.time; 
         if (gameObject.CompareTag("Player"))
         {
             if (transform.position.x < -144f)
@@ -192,12 +198,14 @@ public class CameraSwitcher : MonoBehaviour
     
     public void ShowGameOverScreen()
     {
+        print("Show Game Over Scene");
         isGameOver = true;
         StartCoroutine(FadeOutAndShowImage());
     }
 
-    IEnumerator FadeOutAndShowImage()
+    private IEnumerator FadeOutAndShowImage()
     {
+        print("FadeOutAndShowImage Coroutine Starts");
         blackScreen.gameObject.SetActive(true);
 
         float timer = 0f;
@@ -209,12 +217,35 @@ public class CameraSwitcher : MonoBehaviour
             float progress = timer / fadeDuration;
             blackScreen.color = Color.Lerp(initialColor, targetColor, progress);
             timer += Time.unscaledDeltaTime;
+            print("In While Process");
             yield return null;
         }
 
-        yield return new WaitForSeconds(displayImageDuration);
+       // yield return new WaitForSeconds(displayImageDuration);
 
+        print("after display Image");
         gameOverImage.gameObject.SetActive(true);
+        if (gameOverImage.gameObject.activeSelf)
+        {
+            if (endText != null)
+            {
+                //endText.gameObject.SetActive(true);
+                endText.enabled = true;
+                string timeText = FormatTime(endTime - startTime);
+                endText.text = timeText;
+                print("Successfully give endText at CameraSwitcher");
+            }
+            else
+            {
+                Debug.LogWarning("endText is not found in CameraSwitcher.sc at");
+            }
+        }
+        else
+        {
+            print("gameOverImage is not active");
+        }
+        
+        
 
         while (Time.timeScale == 0f)
         {
@@ -231,6 +262,13 @@ public class CameraSwitcher : MonoBehaviour
     public bool IsGameOver()
     {
         return isGameOver;
+    }
+    
+    private string FormatTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
 }
