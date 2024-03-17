@@ -9,15 +9,16 @@ public class Level2Cameras : MonoBehaviour
     public Transform[] respawnPoints;
     public Collider2D[] endPoints; // 修改为 Collider2D 数组
 
-    private int currentCameraIndex = 0;
+    [SerializeField] private int currentCameraIndex = 0;
     public PlaneController planeController;
     public Rigidbody2D planeRigidbody;
     private Quaternion initialRotation;
+    [Header("Test"),Tooltip("Testest")]
     public Image introImage; // 引入的图片
     public Image endImage;
     public TextMeshProUGUI endText;
+    public GameObject SceneLoadButton;
     public AudioClip bgm;
-
     private AudioSource audioSource;
 
     private float startTime;
@@ -166,9 +167,9 @@ public class Level2Cameras : MonoBehaviour
                 SetImageAlpha(endImage, alpha);
                 yield return null;
             }
-
+            SceneLoadButton.SetActive(true);
             yield return new WaitForSeconds(2f);
-            Time.timeScale = 0f;
+            //Time.timeScale = 0f;
         }
     }
 

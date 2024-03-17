@@ -1015,7 +1015,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 376335010}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &376335014
 Camera:
   m_ObjectHideFlags: 0
@@ -2174,7 +2174,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 3
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.9953271, y: 0.9953271, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -53104,7 +53104,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1723777703}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1723777707
 Camera:
   m_ObjectHideFlags: 0
@@ -53740,6 +53740,7 @@ MonoBehaviour:
   windRight: {fileID: 764575776}
   holdingTimeCnter: 0
   isSpiraling: 0
+  playGetCredit: 0
 --- !u!50 &2005031125
 Rigidbody2D:
   serializedVersion: 4
@@ -53926,6 +53927,14 @@ MonoBehaviour:
   - {fileID: 957316575}
   - {fileID: 376335014}
   - {fileID: 1723777707}
+  respawnPoints: []
+  endPoints: []
+  planeController: {fileID: 0}
+  planeRigidbody: {fileID: 0}
+  introImage: {fileID: 0}
+  endImage: {fileID: 0}
+  endText: {fileID: 0}
+  bgm: {fileID: 0}
 --- !u!1 &2093841126
 GameObject:
   m_ObjectHideFlags: 0

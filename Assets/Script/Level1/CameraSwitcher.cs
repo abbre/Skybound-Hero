@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CameraSwitcher : MonoBehaviour
 {
@@ -27,13 +28,13 @@ public class CameraSwitcher : MonoBehaviour
     public Transform respawnPointCamera4;
     public Transform respawnPointCamera5;
     public Transform respawnPointCamera6;
-    
+
     public Collider2D endZoneCamera2;
     public Collider2D endZoneCamera3;
     public Collider2D endZoneCamera4;
     public Collider2D endZoneCamera5;
     public Collider2D finish;
-    
+
     public Rigidbody2D planeRigidbody;
     private Quaternion initialRotation;
 
@@ -44,12 +45,15 @@ public class CameraSwitcher : MonoBehaviour
     public Image gameOverImage;
     public float fadeDuration = 1f;
     public float displayImageDuration = 2f;
+    public GameObject changeSceneButton;
 
     private bool isGameOver = false;
     public TextMeshProUGUI endText;
     private float startTime;
     private float endTime;
-    
+
+    private float _timer = 0;
+
     void Start()
     {
         // 初始时只激活 Player 相关相机
@@ -58,13 +62,11 @@ public class CameraSwitcher : MonoBehaviour
 
         blackScreen.gameObject.SetActive(false);
         gameOverImage.gameObject.SetActive(false);
-        
-       
     }
 
     void Update()
     {
-        endTime = Time.time; 
+        endTime = Time.time;
         if (gameObject.CompareTag("Player"))
         {
             if (transform.position.x < -144f)
@@ -140,9 +142,9 @@ public class CameraSwitcher : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other == endZoneCamera2)
-            {
-                SwitchToCamera3();
-            }
+        {
+            SwitchToCamera3();
+        }
 
         if (isPlane)
         {
@@ -166,7 +168,7 @@ public class CameraSwitcher : MonoBehaviour
                 }
 
                 planeController.isSpiraling = false;
-                planeRigidbody.gravityScale = 1f; 
+                planeRigidbody.gravityScale = 1f;
                 planeRigidbody.velocity = Vector2.zero;
                 planeRigidbody.angularVelocity = 0f;
                 transform.rotation = initialRotation;
@@ -177,14 +179,17 @@ public class CameraSwitcher : MonoBehaviour
             {
                 SwitchToCamera4();
             }
+
             if (other == endZoneCamera4)
             {
                 SwitchToCamera5();
             }
+
             if (other == endZoneCamera5)
             {
                 SwitchToCamera6();
             }
+
             if (other == finish)
             {
                 if (!IsGameOver())
@@ -195,17 +200,17 @@ public class CameraSwitcher : MonoBehaviour
             }
         }
     }
-    
+
     public void ShowGameOverScreen()
     {
-        print("Show Game Over Scene");
+        //print("Show Game Over Scene");
         isGameOver = true;
         StartCoroutine(FadeOutAndShowImage());
     }
 
     private IEnumerator FadeOutAndShowImage()
     {
-        print("FadeOutAndShowImage Coroutine Starts");
+        //print("FadeOutAndShowImage Coroutine Starts");
         blackScreen.gameObject.SetActive(true);
 
         float timer = 0f;
@@ -217,58 +222,51 @@ public class CameraSwitcher : MonoBehaviour
             float progress = timer / fadeDuration;
             blackScreen.color = Color.Lerp(initialColor, targetColor, progress);
             timer += Time.unscaledDeltaTime;
-            print("In While Process");
             yield return null;
         }
 
-       // yield return new WaitForSeconds(displayImageDuration);
+        // yield return new WaitForSeconds(displayImageDuration);
 
-        print("after display Image");
         gameOverImage.gameObject.SetActive(true);
         if (gameOverImage.gameObject.activeSelf)
         {
             if (endText != null)
             {
-                //endText.gameObject.SetActive(true);
+                _timer += Time.deltaTime;
                 endText.enabled = true;
                 string timeText = FormatTime(endTime - startTime);
                 endText.text = timeText;
-                print("Successfully give endText at CameraSwitcher");
-            }
-            else
-            {
-                Debug.LogWarning("endText is not found in CameraSwitcher.sc at");
             }
         }
-        else
-        {
-            print("gameOverImage is not active");
-        }
-        
-        
-
-        while (Time.timeScale == 0f)
-        {
-            yield return null;
-        }
-
-        gameOverImage.gameObject.SetActive(false);
-        blackScreen.color = initialColor;
-        blackScreen.gameObject.SetActive(false);
+        changeSceneButton.SetActive(true);
 
         isGameOver = false;
+        
+        //StartCoroutine(LoadScene());
+        
+        //SceneManager.LoadScene("Level2");
+        /*if (_timer >= 2)
+        {
+            SceneManager.LoadScene("Level2");
+        }*/
     }
 
+    public void LoadScene()
+    {
+        //print("Before Waiting for 2 seconds");
+        //yield return new WaitForSeconds(2f);
+        //print("Before Loading Level2");
+        SceneManager.LoadScene("Level2 1");
+    }
     public bool IsGameOver()
     {
         return isGameOver;
     }
-    
+
     private string FormatTime(float timeInSeconds)
     {
         int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
         int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
         return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
-
 }
