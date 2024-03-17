@@ -1,15 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-
+using UnityEngine.SceneManagement;
 public class CameraController : MonoBehaviour
 {
     public Camera[] cameras; // 摄像机数组
     public Transform[] respawnPoints; // 复活点数组
-    private int currentCameraIndex = 0; // 当前摄像机索引
+    [HideInInspector]public int currentCameraIndex = 0; // 当前摄像机索引
     private bool respawn = false; // 标记是否需要显示第一个红色区域
     public GameObject firstRedArea; // 第一个红色区域对象
     public Image blackoutScreen;
+    [HideInInspector] public bool gameStart = false;
 
     private void Start()
     {
@@ -86,6 +87,10 @@ public class CameraController : MonoBehaviour
         yield return StartCoroutine(FadeFromBlack(1f)); // 从黑屏淡入，持续1秒
         
         yield return new WaitForSeconds(5f); // 在 Camera7 停留
+
+        SceneManager.LoadScene("Level1");
+
+
     }
 
     private void SwitchCamera(int cameraIndex)
@@ -102,6 +107,7 @@ public class CameraController : MonoBehaviour
         float counter = 0;
         while (counter < duration)
         {
+            gameStart = true;
             counter += Time.deltaTime;
             float alpha = Mathf.Lerp(0, 1, counter / duration);
             blackoutScreen.color = new Color(0, 0, 0, alpha);

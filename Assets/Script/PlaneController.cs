@@ -34,6 +34,9 @@ public class PlaneController : MonoBehaviour
  
     private Rigidbody2D rb;
 
+    public bool playGetCredit = false;
+    
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -45,6 +48,9 @@ public class PlaneController : MonoBehaviour
 
         windUp.SetActive(false);
         windRight.SetActive(false);
+        
+        
+    
     }
 
     private void Update()
@@ -184,6 +190,12 @@ public class PlaneController : MonoBehaviour
             isSpiraling = false;
             windUp.SetActive(false);
             windRight.SetActive(false);
+        }
+
+        if (other.CompareTag("RedArea"))
+        {
+            playGetCredit = true;
+            
         }
     }
     
