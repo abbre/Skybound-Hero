@@ -8,7 +8,7 @@ public class Cameras : MonoBehaviour
     public Camera[] cameras;
     public Transform[] respawnPoints;
     public Transform[] endPoints;
-    private int currentCameraIndex = 0;
+    [SerializeField] private int currentCameraIndex = 0;
 
     public PlaneController planeController;
     public Rigidbody2D planeRigidbody;
@@ -35,6 +35,8 @@ public class Cameras : MonoBehaviour
     private float endTime;
 
     public bool enableFlash = true;
+
+    public GameObject SceneChangeButton;
 
     private void Start()
     {
@@ -341,6 +343,7 @@ public class Cameras : MonoBehaviour
             {
                 image2.gameObject.SetActive(true);
                 timer = 0f;
+                SceneChangeButton.SetActive(true);
                 while (timer < duration)
                 {
                     timer += Time.deltaTime;
@@ -352,8 +355,8 @@ public class Cameras : MonoBehaviour
                 yield return new WaitForSeconds(2f);
 
             }
-
-            Time.timeScale = 0f;
+            
+            //Time.timeScale = 0f;
         }
     }
 

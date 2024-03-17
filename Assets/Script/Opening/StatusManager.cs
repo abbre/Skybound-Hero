@@ -9,7 +9,7 @@ public class StartGame : MonoBehaviour
     void Update()
     {
         // 检测玩家是否按下了任意键
-        if (Input.anyKeyDown)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             // 加载正式游戏场景
             SceneManager.LoadScene(gameSceneName);
