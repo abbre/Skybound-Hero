@@ -108,7 +108,7 @@ public class Level2Cameras : MonoBehaviour
             }
         }
     }
-    private System.Collections.IEnumerator IntroSequence()
+    private IEnumerator IntroSequence()
     {
         if (introImage != null)
         {

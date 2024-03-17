@@ -194,7 +194,7 @@ public class CameraSwitcher : MonoBehaviour
             {
                 if (!IsGameOver())
                 {
-                    Time.timeScale = 0f;
+                    //Time.timeScale = 0f;
                     ShowGameOverScreen();
                 }
             }
