@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Level2Cameras : MonoBehaviour
 {
@@ -11,11 +13,30 @@ public class Level2Cameras : MonoBehaviour
     public PlaneController planeController;
     public Rigidbody2D planeRigidbody;
     private Quaternion initialRotation;
+    public Image introImage; // 引入的图片
+    public Image endImage;
+    public TextMeshProUGUI endText;
+    public AudioClip bgm;
+
+    private AudioSource audioSource;
+
+    private float startTime;
+    private float endTime;
 
     void Start()
     {
         initialRotation = transform.rotation;
         InitializeCameras();
+
+        StartCoroutine(IntroSequence()); // 开始引入序列
+        startTime = Time.time; // 记录游戏开始时间
+
+        audioSource = GetComponent<AudioSource>();
+
+        // 播放雨声
+        audioSource.clip = bgm;
+        audioSource.loop = true;
+        audioSource.Play();
     }
 
     private void InitializeCameras()
@@ -72,10 +93,90 @@ public class Level2Cameras : MonoBehaviour
                 {
                     // 传送到相应相机的终点
                     transform.position = endPoints[currentCameraIndex].transform.position;
-                    SwitchToNextCamera();
+                    if (currentCameraIndex == 6)
+                    {
+                        endTime = Time.time; // 记录游戏结束时间
+                        StartCoroutine(FinalSequence());
+                    }
+                    else
+                    {
+                        SwitchToNextCamera();
+                    }
                 }
                 break; // 跳出循环，避免重复处理
             }
         }
     }
+    private System.Collections.IEnumerator IntroSequence()
+    {
+        if (introImage != null)
+        {
+            // Enable the intro image
+            introImage.gameObject.SetActive(true);
+
+            // Fade in
+            float duration = 2f;
+            float timer = 0f;
+            
+            yield return new WaitForSeconds(2f);
+
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                float alpha = Mathf.Lerp(1f, 0f, timer / (duration * 0.5f));
+                SetImageAlpha(introImage, alpha);
+                yield return null;
+            }
+
+            // Disable the intro image
+            introImage.gameObject.SetActive(false);
+        }
+    }
+
+    private void SetImageAlpha(Image image, float alpha)
+    {
+        if (image != null)
+        {
+            Color color = image.color;
+            color.a = alpha;
+            image.color = color;
+        }
+    }
+
+    private System.Collections.IEnumerator FinalSequence()
+    {
+        if (endImage != null)
+        {
+            // Enable the intro image
+            endImage.gameObject.SetActive(true);
+            if (endText != null)
+            {
+                endText.gameObject.SetActive(true);
+                string timeText = FormatTime(endTime - startTime);
+                endText.text = timeText;
+            }
+
+            // Fade in
+            float duration = 2f;
+            float timer = 0f;
+            while (timer < duration)
+            {
+                timer += Time.deltaTime;
+                float alpha = Mathf.Lerp(0f, 1f, timer / (duration * 0.25f));
+                SetImageAlpha(endImage, alpha);
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(2f);
+            Time.timeScale = 0f;
+        }
+    }
+
+    private string FormatTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
+    }
 }
+
