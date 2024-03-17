@@ -33,6 +33,8 @@ public class Cameras : MonoBehaviour
     private float startTime;
     private float endTime;
 
+    public bool enableFlash = true;
+
     private void Start()
     {
         initialRotation = transform.rotation;
@@ -50,6 +52,7 @@ public class Cameras : MonoBehaviour
 
     private void Update()
     {
+        
         if (rainBar.rainSlider.value == 0)
         {
             transform.position = respawnPoints[currentCameraIndex].position;
@@ -173,6 +176,7 @@ public class Cameras : MonoBehaviour
             yield return new WaitForSeconds(3f);
             
             StartCoroutine(TransitionToCamera());
+            enableFlash = false;
             // Fade out
             timer = 0f;
             while (timer < duration)

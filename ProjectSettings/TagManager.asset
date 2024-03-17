@@ -16,6 +16,7 @@ TagManager:
   - LavaWind
   - CameraTrigger
   - LavaWindDown
+  - lightning_bg
   layers:
   - Default
   - TransparentFX

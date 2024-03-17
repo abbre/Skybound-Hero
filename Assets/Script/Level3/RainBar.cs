@@ -8,6 +8,7 @@ public class RainBar : MonoBehaviour
     public Image Fill;
     [SerializeField] private float healthDecline = 0.5f;
     private bool _inRain = false;
+    public Cameras camera;
 
     // Start is called before the first frame update
     void Start()
@@ -17,6 +18,7 @@ public class RainBar : MonoBehaviour
 
     void Update()
     {
+        if (!camera.enableFlash) return;
         if (!_inRain)
         {
             rainSlider.value += healthDecline;
@@ -43,26 +45,25 @@ public class RainBar : MonoBehaviour
     }
 
 
-private void OnTriggerStay2D(Collider2D other)
-{
-  
-    if (other.CompareTag("Rain"))
+    private void OnTriggerStay2D(Collider2D other)
     {
-        _inRain = true;
+        if (other.CompareTag("Rain"))
+        {
+            _inRain = true;
+        }
     }
-}
 
-private void OnTriggerExit2D(Collider2D other)
-{
-    if (other.CompareTag("Rain"))
+    private void OnTriggerExit2D(Collider2D other)
     {
-        _inRain = false;
+        if (other.CompareTag("Rain"))
+        {
+            _inRain = false;
+        }
     }
-}
 
-public void ResetRainBar()
-{
-    rainSlider.value = rainSlider.maxValue;
-    Fill.color = Color.white;
-}
+    public void ResetRainBar()
+    {
+        rainSlider.value = rainSlider.maxValue;
+        Fill.color = Color.white;
+    }
 }
