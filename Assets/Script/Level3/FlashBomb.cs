@@ -41,8 +41,6 @@ public class FlashBomb : MonoBehaviour
                 audioSource.loop = false;
                 audioSource.Play();
                 Flash();
-                
-             
             }
         }
     }
@@ -72,7 +70,7 @@ public class FlashBomb : MonoBehaviour
                 _timer = 0f;
             }
         }
-        
+
         image.color = new Color(1, 1, 1, _alphaValue);
     }
 }
