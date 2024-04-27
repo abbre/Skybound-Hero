@@ -5,6 +5,8 @@ public class Droplet : MonoBehaviour
     public float fallSpeed = 5f;
     public float resetSpeed = 1f;
     public float resetDelay = 2.5f;
+    
+    public float fallPosition = -17f;
 
     private Vector3 originalPosition;
     private bool isFalling = false;
@@ -26,7 +28,7 @@ public class Droplet : MonoBehaviour
             transform.position = newPosition;
 
             // 如果到达目标位置
-            if (transform.position.y <= -17f)
+            if (transform.position.y <= fallPosition)
             {
                 // 延迟重置位置
                 Invoke("ResetPosition", resetDelay);
