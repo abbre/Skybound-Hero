@@ -26,7 +26,7 @@ TagManager:
   - UI
   - Background
   - Player
-  - 
+  - Clouds
   - 
   - 
   - 
@@ -71,4 +71,7 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 2971323133
+    locked: 0
+  - name: Clouds
+    uniqueID: 4079347813
     locked: 0
