@@ -9,6 +9,8 @@ public class RainBar : MonoBehaviour
     [SerializeField] public float healthDecline = 0.045f;
     private bool _inRain = false;
     public Cameras camera;
+    private float timer = 0f;
+    public float lerpDuration = 0.5f; // Duration for the lerping effect
 
     // Start is called before the first frame update
     void Start()
@@ -22,14 +24,18 @@ public class RainBar : MonoBehaviour
 
         if (!_inRain)
         {
-            rainSlider.value += healthDecline;
-            rainSlider.value = Mathf.Clamp(rainSlider.value, rainSlider.minValue, rainSlider.maxValue);
+            timer += Time.deltaTime;
+            float targetValue = rainSlider.value + healthDecline;
+            rainSlider.value = Mathf.Lerp(rainSlider.value, targetValue, timer / lerpDuration);
         }
         else
         {
-            rainSlider.value -= healthDecline;
-            rainSlider.value = Mathf.Clamp(rainSlider.value, rainSlider.minValue, rainSlider.maxValue);
+            timer += Time.deltaTime;
+            float targetValue = rainSlider.value - healthDecline;
+            rainSlider.value = Mathf.Lerp(rainSlider.value, targetValue, timer / lerpDuration);
         }
+
+        timer = Mathf.Clamp(timer, 0f, lerpDuration); // Ensure timer doesn't exceed lerpDuration
 
         if (rainSlider.value > rainSlider.maxValue / 2)
         {
@@ -51,6 +57,7 @@ public class RainBar : MonoBehaviour
         if (other.CompareTag("Rain"))
         {
             _inRain = true;
+            timer = 0f; // Reset the timer when in rain
         }
     }
 
@@ -59,6 +66,7 @@ public class RainBar : MonoBehaviour
         if (other.CompareTag("Rain"))
         {
             _inRain = false;
+            timer = 0f; // Reset the timer when exiting rain
         }
     }
 

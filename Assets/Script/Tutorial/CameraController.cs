@@ -93,7 +93,7 @@ public class CameraController : MonoBehaviour
         
         yield return new WaitForSeconds(5f); // 在 Camera7 停留
 
-        SceneManager.LoadScene("Level1");
+        SceneManager.LoadScene("Level1 1");
  
 
     }
